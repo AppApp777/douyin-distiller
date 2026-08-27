@@ -31,3 +31,11 @@ douyin_data/
 ## 使用方式
 
 将 [skills/douyin-transcript-exporter](skills/douyin-transcript-exporter) 导入豆包工作的 Skill 环境后调用，并提供抖音博主主页链接、单条视频链接或分享短链。需要写入飞书多维表格时，再提供目标表格链接；明确选择本地保存时无需提供。
+
+安装时可直接使用以下提示词：
+
+```text
+请打开下面的 GitHub 仓库，找到其中的 douyin-transcript-exporter Skill，阅读相关文件并完成安装：
+[https://github.com/jinchenma94/social-media-data-tools](https://github.com/jinchenma94/social-media-data-tools)
+安装完成后，请告诉我安装结果。
+```
