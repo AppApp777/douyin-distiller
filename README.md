@@ -13,6 +13,12 @@
 [![Powered by](https://img.shields.io/badge/蒸馏引擎-cangjie--skill-8A2BE2.svg)](https://github.com/kangarooking/cangjie-skill)
 [![Runtime](https://img.shields.io/badge/运行环境-豆包工作-orange.svg)](#使用前提)
 
+<br>
+
+<img src="assets/panel-step1.png" width="820" alt="指令面板：第一步 确认博主">
+
+<sub>说一句话，这个面板自己就开了 · 填完对 AI 说“按面板执行”</sub>
+
 </div>
 
 ---
@@ -143,6 +149,20 @@ AI 会自己读面板上的参数，然后开始干活。**你不需要会写提
 2. **采集参数** —— 抓多少条、按最新还是按最热排序、要不要逐字稿、要不要 AI 扩展字段
 3. **导出与蒸馏** —— 选格式（Markdown / Excel / Word / PDF / JSON / 飞书表格）、选蒸馏强度
 4. **确认执行** —— 指令预览，然后去对话框说"按面板执行"
+
+<div align="center">
+
+<img src="assets/panel-step3.png" width="760" alt="指令面板：第三步 导出与蒸馏">
+
+<sub><b>第三步</b>：导出格式可多选；蒸馏开关一打开，多出一栏蒸馏强度</sub>
+
+<br><br>
+
+<img src="assets/panel-step4.png" width="760" alt="指令面板：第四步 确认并执行">
+
+<sub><b>第四步</b>：面板把你点的每一下翻译成这段话。你不用会写提示词</sub>
+
+</div>
 
 ⭐ **它不执行任何操作，也不联网**，只负责把你的选择翻译成一句 AI 能准确理解的话。
 单文件 HTML，零外部依赖，源码可读。
