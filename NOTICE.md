@@ -13,7 +13,7 @@
 | `skills/douyin-distiller/SKILL.md` | 同上，衍生 | 大幅改写（新增搜索博主、多格式导出、蒸馏阶段、面板硬绑定） | ⚠️ 衍生作品，底层仍源自上游。**不在 MIT 覆盖范围内** |
 | `skills/douyin-distiller/references/douyin.md` | 同上，衍生 | 改动约 410 行 | ⚠️ 同上 |
 | `skills/cangjie-skill/**` | [kangarooking/cangjie-skill](https://github.com/kangarooking/cangjie-skill) | **原样收录**，只去掉了 `.github/`（理由见第三节） | ⭐ **MIT（原作者的）**，许可证全文随附在 `skills/cangjie-skill/LICENSE` |
-| `skills/douyin-distiller/逐字稿采集面板.html` | ✅ 本仓库新增 | 全新 | **MIT** |
+| `skills/douyin-distiller/douyin-distiller-panel.html` | ✅ 本仓库新增 | 全新 | **MIT** |
 | `skills/douyin-distiller/references/export.md` | ✅ 本仓库新增 | 全新 | **MIT** |
 | `skills/douyin-distiller/references/distillation.md` | ✅ 本仓库新增 | 全新 | **MIT** |
 | `docs/安装指南.md` · `docs/使用教程.md` · `docs/常见问题.md` | ✅ 本仓库新增 | 全新 | **MIT** |
