@@ -89,10 +89,10 @@ https://github.com/AppApp777/douyin-distiller
 安装后直接说人话就行：
 
 ```text
-帮我采集发疯姥子的抖音视频
-抖音号 zhangjin011223 的作品，帮我导出逐字稿
-把这个博主的视频都抓下来：https://www.douyin.com/user/xxxxx
-采集李自然最新 10 条视频，要逐字稿，导出 Word
+帮我采集七也的抖音视频
+七也的作品，帮我导出逐字稿
+采集七也最新 10 条视频，要逐字稿，导出 Word
+把这个主页的视频都抓下来：https://www.douyin.com/user/<主页链接>
 ```
 
 支持的输入：**博主昵称 · 抖音号 · 主页链接 · 单条视频链接 · 分享短链**。
