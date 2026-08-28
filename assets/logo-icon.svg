@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512"
+     fill="none" role="img" aria-label="douyin-distiller">
+  <title>douyin-distiller (icon)</title>
+
+  <!-- 头像 / favicon 用：深底圆角砖 ＋ 浅色 mark。
+       GitHub 头像、小红书组件、浏览器标签都是方框，填满的砖比透明 mark 更稳。-->
+  <rect width="512" height="512" rx="112" fill="#002060"/>
+
+  <g transform="translate(256 256) scale(0.68) translate(-256 -259)">
+    <g fill="#22B8FF">
+      <circle cx="166" cy="120" r="30"/>
+      <circle cx="256" cy="120" r="30"/>
+      <circle cx="346" cy="120" r="30"/>
+    </g>
+
+    <path d="M120 158 L256 306 L392 158" stroke="#F1F5F9" stroke-width="40"
+          stroke-linecap="round" stroke-linejoin="round"/>
+
+    <path d="M256 308 L256 336" stroke="#F1F5F9" stroke-width="56"
+          stroke-linecap="round"/>
+
+    <circle cx="256" cy="402" r="26" fill="#22B8FF"/>
+  </g>
+</svg>

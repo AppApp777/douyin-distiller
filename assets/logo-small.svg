@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512"
+     fill="none" role="img" aria-label="douyin-distiller">
+  <title>douyin-distiller (small)</title>
+
+  <!-- 小尺寸版：六个点缩到 48px 以下会糊成一团，这里减到三个并加粗。
+       Y 形与那一滴跟主版完全一致，identity 不变。-->
+  <g fill="#00A4FC">
+    <circle cx="166" cy="120" r="30"/>
+    <circle cx="256" cy="120" r="30"/>
+    <circle cx="346" cy="120" r="30"/>
+  </g>
+
+  <path d="M120 158 L256 306 L392 158" stroke="#002060" stroke-width="40"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <path d="M256 308 L256 336" stroke="#002060" stroke-width="56"
+        stroke-linecap="round"/>
+
+  <circle cx="256" cy="402" r="26" fill="#00A4FC"/>
+</svg>
