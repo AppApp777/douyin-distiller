@@ -1,23 +1,9 @@
+The xkcd font data and Star History logo used by the chart generator are
+derived from https://github.com/star-history/star-history.
+
 MIT License
 
-Copyright (c) 2026 苗七也 (AppApp777)
-
-IMPORTANT — SCOPE OF THIS LICENSE
-
-This repository is a fork of https://github.com/jinchenma94/social-media-data-tools,
-which does not declare a license. This MIT License applies ONLY to the parts of this
-repository authored by the copyright holder above. Files inherited from the upstream
-project remain under the copyright of their original author and are NOT relicensed here.
-
-This repository also redistributes, verbatim, the third-party project
-https://github.com/kangarooking/cangjie-skill under `skills/cangjie-skill/`.
-It is MIT-licensed by its own author; its copyright notice and full license text are
-kept intact at `skills/cangjie-skill/LICENSE`, which governs that directory. Nothing
-in this file relicenses it or claims any copyright over it.
-
-See NOTICE.md for the exact file-by-file breakdown.
-
----
+Copyright (c) 2025 Star History
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

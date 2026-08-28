@@ -64,9 +64,14 @@
 
 ## 安装
 
-把本仓库的 `skills/douyin-distiller` 目录导入豆包工作的 Skill 环境。
+把本仓库 `skills/` 下的**两个**文件夹整个复制到豆包工作的 skills 目录（`.user_skills/`）：
 
-也可以直接把下面这段话发给豆包工作：
+```text
+skills/douyin-distiller/   →  .user_skills/douyin-distiller/
+skills/cangjie-skill/      →  .user_skills/cangjie-skill/
+```
+
+也可以直接把下面这段话发给豆包工作，让它自己去装：
 
 ```text
 请打开下面的 GitHub 仓库，找到其中的 douyin-distiller Skill，阅读相关文件并完成安装：
@@ -74,19 +79,34 @@ https://github.com/AppApp777/douyin-distiller
 安装完成后，请告诉我安装结果。
 ```
 
-### ⚠️ 蒸馏功能需要另外装一个依赖
+⭐ **蒸馏引擎已经随仓库一起带上了**，不用再去别处找。
+`skills/cangjie-skill/` 是 [kangarooking/cangjie-skill](https://github.com/kangarooking/cangjie-skill)（MIT）的原样副本，
+许可证随附。没有它，采集和导出照常工作，但"蒸馏"跑不起来。
 
-蒸馏那一步调用的是 [kangarooking/cangjie-skill](https://github.com/kangarooking/cangjie-skill)（MIT，独立项目）。
-**没装它，采集和导出照常工作，但"蒸馏"会跑不起来。**
-
-同理，逐字稿抓取失败时的回退路径（下载音频 → 飞书妙记转写）依赖豆包工作内置的
+逐字稿抓取失败时的回退路径（下载音频 → 飞书妙记转写）依赖豆包工作内置的
 `doubao-video-extract`。这条路很慢（每条 1–3 分钟），只在主路径失败时才走。
+
+👉 手把手的图文版见 [docs/安装指南.md](docs/安装指南.md)。
 
 ---
 
 ## 怎么用
 
-安装后直接说人话就行：
+**入口是面板，不是打字。**
+
+1. 双击 `skills/douyin-distiller/逐字稿采集面板.html`
+   （装完 Skill 后它就在你本地的 `.user_skills/douyin-distiller/` 里；建议复制一份到桌面）
+2. 按四步向导填表
+3. 回到豆包工作说一句：**按面板执行**
+
+AI 会自己读面板上的参数，然后开始干活。**你不需要会写提示词。**
+
+支持的输入：**博主昵称 · 抖音号 · 主页链接 · 单条视频链接 · 分享短链**。
+
+👉 完整流程见 [docs/使用教程.md](docs/使用教程.md)，卡住了看 [docs/常见问题.md](docs/常见问题.md)。
+
+<details>
+<summary>不想用面板？也可以直接说人话（不推荐，参数容易漏）</summary>
 
 ```text
 帮我采集七也的抖音视频
@@ -95,24 +115,28 @@ https://github.com/AppApp777/douyin-distiller
 把这个主页的视频都抓下来：https://www.douyin.com/user/<主页链接>
 ```
 
-支持的输入：**博主昵称 · 抖音号 · 主页链接 · 单条视频链接 · 分享短链**。
+</details>
 
 ---
 
 ## 指令面板
 
-`panel/index.html` 是一个**离线的指令生成器**——不联网、不装依赖、双击就开。
+`skills/douyin-distiller/逐字稿采集面板.html` 是一个**离线的指令生成器**——不联网、不装依赖、双击就开。
 
-三步向导：
+四步向导：
 
-1. **选谁** —— 博主名 / 抖音号 / 链接
-2. **采集参数** —— 抓多少条、按最新还是按最热排序、要不要逐字稿
+1. **确认博主** —— 昵称 / 抖音号切换，重名提示，找抖音号的引导
+2. **采集参数** —— 抓多少条、按最新还是按最热排序、要不要逐字稿、要不要 AI 扩展字段
 3. **导出与蒸馏** —— 选格式（Markdown / Excel / Word / PDF / JSON / 飞书表格）、选蒸馏强度
-
-点完生成一条完整指令，复制粘贴给豆包工作即可。
+4. **确认执行** —— 指令预览，然后去对话框说"按面板执行"
 
 ⭐ **它不执行任何操作，也不联网**，只负责把你的选择翻译成一句 AI 能准确理解的话。
-整份文件 600 多行，零外部依赖，源码可读。
+单文件 HTML，零外部依赖，源码可读。
+
+⭐ 面板在**豆包工作的内置浏览器**里打开时，AI 能直接读到你填的参数，连复制粘贴都省了。
+在外部浏览器打开也行，用面板上的"复制指令"按钮把指令粘过去即可。
+
+⛔ **全仓库只有这一份面板文件。** 之前根目录还放过一份副本，两份会各自漂移——已经删掉了。
 
 ---
 
@@ -160,6 +184,28 @@ https://github.com/AppApp777/douyin-distiller
 
 ---
 
+## 仓库结构
+
+```text
+douyin-distiller/
+├── skills/
+│   ├── douyin-distiller/            ← 采集 Skill，复制到 .user_skills/
+│   │   ├── SKILL.md
+│   │   ├── 逐字稿采集面板.html          ← 面板（全仓唯一一份）
+│   │   └── references/
+│   │       ├── douyin.md            登录处理 · 选择器 · 逐字稿提取 · 常见异常
+│   │       ├── export.md            六种导出格式怎么生成
+│   │       ├── lark-write.md        飞书多维表格写入
+│   │       └── distillation.md      蒸馏流水线与 cangjie-skill 的对接
+│   └── cangjie-skill/               ← 蒸馏引擎，原样收录（MIT），也复制到 .user_skills/
+├── docs/                            安装指南 · 使用教程 · 常见问题
+├── assets/                          logo（标准版 / 小尺寸版 / 头像版）
+├── NOTICE.md                        ⭐ 逐文件的来源与许可
+└── LICENSE
+```
+
+---
+
 ## 技术来源
 
 这个项目**不是从零写的**，它站在两个上游项目上。逐项列清楚：
@@ -167,8 +213,8 @@ https://github.com/AppApp777/douyin-distiller
 | 部分 | 来源 | 许可 |
 |---|---|---|
 | **抖音采集与逐字稿链路** | [jinchenma94/social-media-data-tools](https://github.com/jinchenma94/social-media-data-tools) —— 本仓库 fork 自它 | ⛔ 上游未声明许可证 |
-| **内容蒸馏方法论（RIA-TV++）** | [kangarooking/cangjie-skill](https://github.com/kangarooking/cangjie-skill) —— 运行时依赖，本仓库不含其代码 | ⭐ MIT |
-| **多格式导出 · 指令面板 · 博主搜索 · 图标** | 本仓库新增 | ⭐ MIT |
+| **内容蒸馏方法论（RIA-TV++）** | [kangarooking/cangjie-skill](https://github.com/kangarooking/cangjie-skill) —— **原样收录在 `skills/cangjie-skill/`**，许可证随附 | ⭐ MIT（原作者的） |
+| **多格式导出 · 指令面板 · 博主搜索 · 文档 · 图标** | 本仓库新增 | ⭐ MIT |
 
 **逐文件的归属、状态和适用许可，全部列在 [NOTICE.md](NOTICE.md) 里。**
 包括哪些文件一字未改、哪些是衍生、哪些是全新的。
