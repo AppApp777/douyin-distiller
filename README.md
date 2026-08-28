@@ -74,10 +74,19 @@ skills/cangjie-skill/      →  .user_skills/cangjie-skill/
 也可以直接把下面这段话发给豆包工作，让它自己去装：
 
 ```text
-请打开下面的 GitHub 仓库，找到其中的 douyin-distiller Skill，阅读相关文件并完成安装：
+请打开这个 GitHub 仓库，帮我安装里面的 Skill：
 https://github.com/AppApp777/douyin-distiller
-安装完成后，请告诉我安装结果。
+
+要装的是 skills/ 目录下的两个文件夹，各自整个复制到我的 .user_skills/ 目录里：
+1. douyin-distiller —— 主工具。文件夹里的 douyin-distiller-panel.html 也要一起复制过去，
+   它就在 SKILL.md 旁边，少了它面板打不开。
+2. cangjie-skill —— 蒸馏引擎。少了它采集和导出照常，但"蒸馏"跑不起来。
+
+.user_skills 在哪你自己找，不用问我。装完列一下我已安装的 skills，确认这两个都在。
 ```
+
+⛔ **一定要说"两个文件夹"。** 只说"安装 douyin-distiller"的话，AI 会只装主工具，
+装完当时看着一切正常——直到你让它蒸馏，才发现引擎不在。
 
 ⭐ **蒸馏引擎已经随仓库一起带上了**，不用再去别处找。
 `skills/cangjie-skill/` 是 [kangarooking/cangjie-skill](https://github.com/kangarooking/cangjie-skill)（MIT）的原样副本，
