@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>抖音逐字稿采集与蒸馏 · 指令面板</title>
+<style>
+  :root {
+    --bg: #f5ead8;
+    --bg-card: #fffdf8;
+    --primary: #c67139;
+    --primary-light: #e8a06a;
+    --primary-dark: #a05a28;
+    --text: #3a2e1f;
+    --text-light: #7a6b5a;
+    --border: #e0d0b8;
+    --success: #5a8a5a;
+    --shadow: 0 2px 12px rgba(198, 113, 57, 0.12);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px;
+  }
+  .container { max-width: 720px; margin: 0 auto; }
+
+  /* 头部 */
+  .header { text-align: center; margin-bottom: 20px; }
+  .header h1 {
+    font-size: 24px; font-weight: 700; color: var(--primary-dark);
+    margin-bottom: 4px;
+  }
+  .header p { font-size: 13px; color: var(--text-light); }
+  .badge {
+    display: inline-block; background: var(--primary); color: #fff;
+    font-size: 10px; padding: 2px 8px; border-radius: 8px;
+    margin-left: 6px; vertical-align: middle; font-weight: 500;
+  }
+
+  /* 步骤指示器 */
+  .stepper {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px; padding: 0 8px;
+  }
+  .step-item {
+    display: flex; flex-direction: column; align-items: center; flex: 1;
+    position: relative;
+  }
+  .step-circle {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #e0d0b8; color: var(--text-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600; transition: all 0.3s;
+    border: 2px solid transparent;
+  }
+  .step-item.active .step-circle {
+    background: var(--primary); color: #fff;
+    box-shadow: 0 0 0 4px rgba(198, 113, 57, 0.15);
+  }
+  .step-item.done .step-circle {
+    background: var(--success); color: #fff;
+  }
+  .step-label {
+    font-size: 11px; color: var(--text-light); margin-top: 4px;
+    text-align: center; white-space: nowrap;
+  }
+  .step-item.active .step-label { color: var(--primary-dark); font-weight: 600; }
+  .step-line {
+    position: absolute; top: 16px; left: 50%; width: 100%; height: 2px;
+    background: #e0d0b8; z-index: 0;
+  }
+  .step-item:last-child .step-line { display: none; }
+  .step-item.done .step-line { background: var(--success); }
+
+  /* 卡片 */
+  .card {
+    background: var(--bg-card); border-radius: 14px;
+    box-shadow: var(--shadow); padding: 24px; margin-bottom: 16px;
+    border: 1px solid var(--border);
+    display: none;
+  }
+  .card.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card-title {
+    font-size: 17px; font-weight: 700; color: var(--primary-dark);
+    margin-bottom: 6px;
+  }
+  .card-subtitle {
+    font-size: 13px; color: var(--text-light); margin-bottom: 18px;
+    line-height: 1.6;
+  }
+
+  /* 表单 */
+  .form-group { margin-bottom: 16px; }
+  .form-group:last-child { margin-bottom: 0; }
+  label {
+    display: block; font-size: 13px; font-weight: 600; color: var(--text);
+    margin-bottom: 6px;
+  }
+  label .hint { font-weight: 400; color: var(--text-light); font-size: 12px; margin-left: 6px; }
+  input[type="text"], input[type="number"], select, textarea {
+    width: 100%; padding: 11px 13px; border: 1.5px solid var(--border);
+    border-radius: 8px; font-size: 14px; color: var(--text);
+    background: #fff; transition: border-color 0.2s; font-family: inherit;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(198, 113, 57, 0.12);
+  }
+  .row { display: flex; gap: 12px; }
+  .row .form-group { flex: 1; }
+
+  /* 输入方式切换 */
+  .input-tabs {
+    display: flex; gap: 0; margin-bottom: 12px;
+    background: #f0e4d0; border-radius: 8px; padding: 3px;
+  }
+  .input-tab {
+    flex: 1; padding: 8px; text-align: center; font-size: 13px;
+    font-weight: 600; color: var(--text-light); cursor: pointer;
+    border-radius: 6px; transition: all 0.2s;
+  }
+  .input-tab.active { background: #fff; color: var(--primary-dark); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+  /* 提示框 */
+  .tip-box {
+    background: #fff8ee; border-left: 3px solid var(--primary);
+    padding: 10px 14px; border-radius: 6px; font-size: 12px;
+    color: var(--text); line-height: 1.7; margin-bottom: 16px;
+  }
+  .tip-box strong { color: var(--primary-dark); }
+
+  /* 开关 */
+  .switch-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+  }
+  .switch-row:last-child { border-bottom: none; }
+  .switch-label { font-size: 14px; color: var(--text); }
+  .switch-label small { display: block; color: var(--text-light); font-size: 12px; margin-top: 2px; }
+  .switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; cursor: pointer; inset: 0;
+    background: #ccc; border-radius: 24px; transition: 0.3s;
+  }
+  .slider:before {
+    content: ""; position: absolute; height: 18px; width: 18px;
+    left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s;
+  }
+  input:checked + .slider { background: var(--primary); }
+  input:checked + .slider:before { transform: translateX(20px); }
+
+  /* 多选标签 */
+  .checkbox-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .checkbox-tag {
+    display: flex; align-items: center; gap: 5px; padding: 7px 14px;
+    border: 1.5px solid var(--border); border-radius: 20px;
+    font-size: 13px; cursor: pointer; transition: all 0.2s; background: #fff;
+  }
+  .checkbox-tag:hover { border-color: var(--primary-light); }
+  .checkbox-tag input { margin: 0; accent-color: var(--primary); }
+  .checkbox-tag.checked { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+  /* 蒸馏选项 */
+  .distill-options { display: none; margin-top: 12px; padding: 14px; background: #faf3e8; border-radius: 8px; }
+  .distill-options.show { display: block; }
+
+  /* 指令预览 */
+  .preview-box {
+    background: #2d2416; color: #f5ead8; border-radius: 10px;
+    padding: 16px; font-size: 13px; line-height: 1.8;
+    font-family: "SF Mono", "Consolas", "Microsoft YaHei", monospace;
+    white-space: pre-wrap; word-break: break-word; max-height: 320px;
+    overflow-y: auto;
+  }
+
+  /* 执行提示 */
+  .execute-tip {
+    background: linear-gradient(135deg, #fff8ee 0%, #fef0dc 100%);
+    border: 2px dashed var(--primary); border-radius: 12px;
+    padding: 20px; text-align: center; margin-top: 16px;
+  }
+  .execute-tip .icon { font-size: 32px; margin-bottom: 8px; }
+  .execute-tip h3 { color: var(--primary-dark); font-size: 16px; margin-bottom: 8px; }
+  .execute-tip p { font-size: 13px; color: var(--text); line-height: 1.7; }
+  .execute-tip .keyword {
+    display: inline-block; background: var(--primary); color: #fff;
+    padding: 4px 14px; border-radius: 6px; font-weight: 600;
+    font-size: 14px; margin: 8px 4px;
+  }
+
+  /* 按钮 */
+  .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+  .btn {
+    flex: 1; padding: 12px 20px; border: none; border-radius: 10px;
+    font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    font-family: inherit;
+  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(198, 113, 57, 0.3); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary { background: #fff; color: var(--primary); border: 1.5px solid var(--primary); }
+  .btn-secondary:hover { background: #faf3e8; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+
+  /* 折叠面板 */
+  .collapse { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
+  .collapse-header {
+    padding: 11px 14px; background: #faf3e8; cursor: pointer;
+    font-size: 13px; font-weight: 600; color: var(--primary-dark);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .collapse-header:hover { background: #f5ead8; }
+  .collapse-header .arrow { transition: transform 0.3s; font-size: 11px; }
+  .collapse.open .collapse-header .arrow { transform: rotate(180deg); }
+  .collapse-body { display: none; padding: 14px; font-size: 12px; line-height: 1.8; color: var(--text); }
+  .collapse.open .collapse-body { display: block; }
+  .collapse-body ol, .collapse-body ul { padding-left: 18px; margin: 6px 0; }
+  .collapse-body li { margin-bottom: 4px; }
+  .collapse-body code {
+    background: #f5ead8; padding: 1px 5px; border-radius: 3px;
+    font-size: 11px; color: var(--primary-dark);
+  }
+
+  .footer-tip {
+    text-align: center; font-size: 11px; color: var(--text-light);
+    margin-top: 16px; padding: 8px;
+  }
+
+  @media (max-width: 600px) {
+    .row { flex-direction: column; gap: 0; }
+    .btn-group { flex-direction: column; }
+    .header h1 { font-size: 19px; }
+    .step-label { font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- 头部 -->
+  <div class="header">
+    <h1>抖音逐字稿采集与蒸馏 <span class="badge">指令面板</span></h1>
+    <p>一步一步来，填好后对 AI 说"按面板执行"即可</p>
+  </div>
+
+  <!-- 步骤指示器 -->
+  <div class="stepper">
+    <div class="step-item active" data-step="1">
+      <div class="step-line"></div>
+      <div class="step-circle">1</div>
+      <div class="step-label">确认博主</div>
+    </div>
+    <div class="step-item" data-step="2">
+      <div class="step-line"></div>
+      <div class="step-circle">2</div>
+      <div class="step-label">采集参数</div>
+    </div>
+    <div class="step-item" data-step="3">
+      <div class="step-line"></div>
+      <div class="step-circle">3</div>
+      <div class="step-label">导出蒸馏</div>
+    </div>
+    <div class="step-item" data-step="4">
+      <div class="step-circle">4</div>
+      <div class="step-label">确认执行</div>
+    </div>
+  </div>
+
+  <!-- 步骤1：确认博主 -->
+  <div class="card active" id="step1">
+    <div class="card-title">第一步：确认博主</div>
+    <div class="card-subtitle">抖音允许重名，输入<strong>抖音号</strong>最准确。如果只知道名字，AI 会搜索并展示候选列表让你选择。</div>
+
+    <div class="input-tabs">
+      <div class="input-tab active" data-tab="name">博主昵称</div>
+      <div class="input-tab" data-tab="id">抖音号</div>
+    </div>
+
+    <div class="form-group" id="nameInput">
+      <label>博主昵称 <span class="hint">可能有重名，AI 会让你确认</span></label>
+      <input type="text" id="authorName" placeholder="例如：发疯姥子" value="发疯姥子">
+    </div>
+
+    <div class="form-group" id="idInput" style="display:none;">
+      <label>抖音号 <span class="hint">最准确，不会有重名</span></label>
+      <input type="text" id="authorId" placeholder="例如：xxxxxx">
+    </div>
+
+    <div class="tip-box">
+      <strong>💡 怎么找抖音号？</strong><br>
+      打开抖音 App → 进入博主主页 → 点击"编辑资料"或主页简介下方 → 看到"抖音号：xxxxxx"
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="nextStep(2)">下一步：采集参数 →</button>
+    </div>
+  </div>
+
+  <!-- 步骤2：采集参数 -->
+  <div class="card" id="step2">
+    <div class="card-title">第二步：采集参数</div>
+    <div class="card-subtitle">选择要采集多少条视频，以及需要哪些信息。</div>
+
+    <div class="row">
+      <div class="form-group">
+        <label>采集数量 <span class="hint">1-50 条</span></label>
+        <input type="number" id="count" value="5" min="1" max="50">
+      </div>
+      <div class="form-group">
+        <label>排序方式</label>
+        <select id="sort">
+          <option value="latest">最新发布</option>
+          <option value="popular">最热门（点赞最多）</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="switch-row">
+        <div class="switch-label">
+          获取完整逐字稿
+          <small>抓取每条视频的口播文字（核心功能，建议开启）</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="transcript" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="switch-row">
+        <div class="switch-label">
+          AI 扩展字段
+          <small>自动生成选题方向、主题总结（需要额外时间）</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="aiExtend">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="prevStep(1)">← 上一步</button>
+      <button class="btn btn-primary" onclick="nextStep(3)">下一步：导出蒸馏 →</button>
+    </div>
+  </div>
+
+  <!-- 步骤3：导出与蒸馏 -->
+  <div class="card" id="step3">
+    <div class="card-title">第三步：导出与蒸馏</div>
+    <div class="card-subtitle">选择导出格式，以及是否需要把逐字稿蒸馏成可复用的方法论。</div>
+
+    <div class="form-group">
+      <label>导出格式 <span class="hint">可多选</span></label>
+      <div class="checkbox-group" id="formats">
+        <label class="checkbox-tag checked"><input type="checkbox" value="markdown" checked> Markdown</label>
+        <label class="checkbox-tag"><input type="checkbox" value="excel"> Excel</label>
+        <label class="checkbox-tag"><input type="checkbox" value="word"> Word</label>
+        <label class="checkbox-tag"><input type="checkbox" value="pdf"> PDF</label>
+        <label class="checkbox-tag"><input type="checkbox" value="json"> JSON</label>
+        <label class="checkbox-tag"><input type="checkbox" value="lark"> 飞书表格</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="switch-row">
+        <div class="switch-label">
+          启用内容蒸馏
+          <small>采集完成后自动蒸馏，输出可执行 Skill 组 + 精华长文（耗时较长，约5-10分钟）</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="distill">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="distill-options" id="distillOptions">
+        <label>蒸馏强度</label>
+        <select id="distillLevel">
+          <option value="quick">快速（只提炼3-5个核心方法论）</option>
+          <option value="standard" selected>标准（完整 RIA-TV++ 流水线，推荐）</option>
+          <option value="full">完整（全部候选单元都构造为 Skill）</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="prevStep(2)">← 上一步</button>
+      <button class="btn btn-primary" onclick="nextStep(4)">下一步：确认执行 →</button>
+    </div>
+  </div>
+
+  <!-- 步骤4：确认执行 -->
+  <div class="card" id="step4">
+    <div class="card-title">第四步：确认并执行</div>
+    <div class="card-subtitle">检查下面的指令是否正确，然后对 AI 说"按面板执行"。</div>
+
+    <div class="preview-box" id="preview">正在生成...</div>
+
+    <div class="execute-tip">
+      <div class="icon">🤖</div>
+      <h3>准备好了吗？</h3>
+      <p>回到对话框，输入下面任意一句话：</p>
+      <span class="keyword">按面板执行</span>
+      <span class="keyword">读取面板指令</span>
+      <span class="keyword">填完了</span>
+      <p style="margin-top:10px;font-size:12px;color:var(--text-light);">AI 会自动读取这个面板上的设置，然后开始采集和蒸馏。</p>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="prevStep(3)">← 修改参数</button>
+      <button class="btn btn-primary" onclick="copyCommand()">📋 复制指令（备用）</button>
+    </div>
+  </div>
+
+  <!-- 新手引导 -->
+  <div class="collapse" id="guideCollapse">
+    <div class="collapse-header" onclick="toggleCollapse('guideCollapse')">
+      📖 第一次使用？看这里
+      <span class="arrow">▼</span>
+    </div>
+    <div class="collapse-body">
+      <ol>
+        <li><strong>安装 Skill</strong>：把 <code>douyin-transcript-exporter</code> 和 <code>cangjie-skill</code> 两个文件夹复制到豆包工作的 skills 目录。</li>
+        <li><strong>打开本面板</strong>：双击这个 HTML 文件，在浏览器中打开（建议在豆包工作的内置浏览器里打开）。</li>
+        <li><strong>按步骤填参数</strong>：从第一步开始，一步一步填好博主信息、采集参数、导出格式。</li>
+        <li><strong>告诉 AI 执行</strong>：填完后在对话框说"按面板执行"，AI 会自动读取面板设置并开始采集。</li>
+        <li><strong>等待结果</strong>：AI 会自动采集、导出、蒸馏，完成后把文件发给你。</li>
+      </ol>
+      <div style="background:#fff3e0;border-left:3px solid var(--primary);padding:8px 12px;border-radius:4px;margin:8px 0;font-size:11px;">
+        ⚠️ 采集博主主页时需要登录抖音账号。如果未登录，AI 会提示你登录，按提示操作即可。建议使用小号登录。
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="collapse" id="faqCollapse">
+    <div class="collapse-header" onclick="toggleCollapse('faqCollapse')">
+      ❓ 常见问题
+      <span class="arrow">▼</span>
+    </div>
+    <div class="collapse-body">
+      <p><strong>Q：博主重名了怎么办？</strong><br>
+      A：如果输入的是昵称且有重名，AI 会搜索并展示候选列表让你选择。建议直接输入抖音号，最准确。</p>
+      <p><strong>Q：为什么抓不到逐字稿？</strong><br>
+      A：逐字稿获取依赖豆包工作的特殊解析能力，必须在豆包工作环境中使用。普通浏览器或其他 AI 工具抓不到。</p>
+      <p><strong>Q：采集需要多久？</strong><br>
+      A：5 条视频约 2-3 分钟。蒸馏另需 5-10 分钟。</p>
+      <p><strong>Q：可以只采集不蒸馏吗？</strong><br>
+      A：可以。第三步关闭"启用内容蒸馏"开关即可。</p>
+      <p><strong>Q：导出的文件在哪里？</strong><br>
+      A：AI 会自动保存并通过对话框发给你，可以直接下载。</p>
+      <p><strong>Q：蒸馏出来的 Skill 怎么用？</strong><br>
+      A：蒸馏完成后，AI 会询问是否安装到 skills 目录。安装后，遇到相关问题时 AI 会自动调用。</p>
+    </div>
+  </div>
+
+  <div class="footer-tip">
+    抖音逐字稿采集与蒸馏面板 · 基于 douyin-transcript-exporter + cangjie-skill
+  </div>
+
+</div>
+
+<script>
+let currentStep = 1;
+const totalSteps = 4;
+
+// 输入方式切换
+document.querySelectorAll('.input-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.input-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const type = tab.dataset.tab;
+    document.getElementById('nameInput').style.display = type === 'name' ? 'block' : 'none';
+    document.getElementById('idInput').style.display = type === 'id' ? 'block' : 'none';
+  });
+});
+
+// 蒸馏开关联动
+document.getElementById('distill').addEventListener('change', (e) => {
+  document.getElementById('distillOptions').classList.toggle('show', e.target.checked);
+});
+
+// 多选标签样式
+document.querySelectorAll('#formats input[type="checkbox"]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    cb.closest('.checkbox-tag').classList.toggle('checked', cb.checked);
+  });
+});
+
+// 步骤切换
+function nextStep(step) {
+  // 验证当前步骤
+  if (currentStep === 1) {
+    const nameTab = document.querySelector('.input-tab.active').dataset.tab;
+    if (nameTab === 'name' && !document.getElementById('authorName').value.trim()) {
+      alert('请输入博主昵称');
+      return;
+    }
+    if (nameTab === 'id' && !document.getElementById('authorId').value.trim()) {
+      alert('请输入抖音号');
+      return;
+    }
+  }
+
+  document.getElementById('step' + currentStep).classList.remove('active');
+  document.querySelector(`.step-item[data-step="${currentStep}"]`).classList.remove('active');
+  document.querySelector(`.step-item[data-step="${currentStep}"]`).classList.add('done');
+
+  currentStep = step;
+  document.getElementById('step' + currentStep).classList.add('active');
+  document.querySelector(`.step-item[data-step="${currentStep}"]`).classList.add('active');
+
+  if (step === 4) generateCommand();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevStep(step) {
+  document.getElementById('step' + currentStep).classList.remove('active');
+  document.querySelector(`.step-item[data-step="${currentStep}"]`).classList.remove('active');
+  document.querySelector(`.step-item[data-step="${currentStep}"]`).classList.remove('done');
+
+  currentStep = step;
+  document.getElementById('step' + currentStep).classList.add('active');
+  document.querySelector(`.step-item[data-step="${currentStep}"]`).classList.add('active');
+  document.querySelector(`.step-item[data-step="${currentStep}"]`).classList.remove('done');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 生成指令
+function generateCommand() {
+  const nameTab = document.querySelector('.input-tab.active').dataset.tab;
+  const authorName = document.getElementById('authorName').value.trim();
+  const authorId = document.getElementById('authorId').value.trim();
+  const count = document.getElementById('count').value;
+  const sort = document.getElementById('sort').value;
+  const wantTranscript = document.getElementById('transcript').checked;
+  const wantAIExtend = document.getElementById('aiExtend').checked;
+  const wantDistill = document.getElementById('distill').checked;
+  const distillLevel = document.getElementById('distillLevel').value;
+
+  const formats = [];
+  document.querySelectorAll('#formats input[type="checkbox"]').forEach(cb => {
+    if (cb.checked) formats.push(cb.value);
+  });
+  const formatNames = {
+    markdown: 'Markdown', excel: 'Excel', word: 'Word',
+    pdf: 'PDF', json: 'JSON', lark: '飞书表格'
+  };
+  const formatText = formats.map(f => formatNames[f]).join('、');
+  const sortText = sort === 'latest' ? '最新发布的' : '最热门的';
+
+  let authorText = '';
+  if (nameTab === 'id' && authorId) {
+    authorText = `抖音号为"${authorId}"的博主`;
+  } else {
+    authorText = `"${authorName}"`;
+  }
+
+  let cmd = `帮我采集抖音${authorText}的${count}条${sortText}视频。`;
+
+  if (nameTab === 'name' && authorName) {
+    cmd += `\n\n注意：抖音允许重名，如果搜索到多个同名博主，请展示候选列表让我确认是哪一个。`;
+  }
+
+  if (wantTranscript) {
+    cmd += `\n\n需要获取每条视频的完整逐字稿。`;
+  } else {
+    cmd += `\n\n不需要逐字稿，只采集基本信息（标题、点赞、评论、转发、发布时间、链接）。`;
+  }
+
+  if (wantAIExtend) {
+    cmd += `\n另外，请用 AI 为每条视频生成选题方向和主题总结。`;
+  }
+
+  if (formats.length > 0) {
+    cmd += `\n\n导出格式：${formatText}。`;
+  }
+
+  if (wantDistill) {
+    const levelText = {
+      quick: '快速模式（只提炼3-5个核心方法论）',
+      standard: '标准模式（完整RIA-TV++流水线）',
+      full: '完整模式（全部候选单元都构造为Skill）'
+    };
+    cmd += `\n\n采集完成后，请对这些逐字稿进行内容蒸馏，${levelText[distillLevel]}。输出可执行的 Skill 组和精华长文（DIGEST.md）。`;
+  }
+
+  cmd += `\n\n请按步骤执行，每完成一步告诉我进度。完成后把导出的文件发给我。`;
+
+  document.getElementById('preview').textContent = cmd;
+  return cmd;
+}
+
+// 复制指令
+function copyCommand() {
+  const cmd = generateCommand();
+  const textarea = document.createElement('textarea');
+  textarea.value = cmd;
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textarea);
+  const btn = event.target;
+  btn.textContent = '✓ 已复制';
+  setTimeout(() => { btn.textContent = '📋 复制指令（备用）'; }, 2000);
+}
+
+// 折叠面板
+function toggleCollapse(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+</script>
+</body>
+</html>
